@@ -308,7 +308,7 @@ conda config --add channels bioconda</code>
 		<pre class="language-bash">
 <code>conda install bwa bowtie       # install non-py/r tools
 conda install samtools=0.1.19  # specify tool version
-conda install r-pheatmap       # install r pkg
+conda install r-upsetr       # install r pkg
 conda install bioconductor-rsamtools  # r pkg on bioconductor</code>
 		</pre>
 		<ul>
@@ -338,26 +338,137 @@ conda install bioconductor-rsamtools  # r pkg on bioconductor</code>
 		<h2 class="shout">UpSetR</h2>
 	</section>
 
+	<section id="vis-set-intersec" class="slide">
+		<h2>Visualizing intersecting sets</h2>
+		<p>What visualization will you use to visualize the intersection of sets?</p>
+		<ul>
+			<li>For example, how results produced by 3 algorithms overlap with each other</li>
+			<li>An example in genomics: comparison of mutation called by different tools</li>
+		</ul>
+		<p class="next">Use <a href="https://en.wikipedia.org/wiki/Venn_diagram">Venn diagram</a>!</p>
+	</section>
+
+	<section id="venn-diagram" class="slide">
+		<h2>Plot a Venn diagram</h2>
+		<p>There are multiple online / R tools:</p>
+		<ul>
+			<li><a href="http://www.interactivenn.net/index.html">InteractiVenn</a> by Heberle <i>et al.</i></li>
+			<li><a href="http://www.cmbi.ru.nl/cdd/biovenn/">BioVenn</a> by Hulsen <i>et al.</i></li>
+			<li><a href="http://bioinfo.genotoul.fr/jvenn/">jvenn</a> by Bardou <i>et al.</i></li>
+			<li><a href="https://cran.r-project.org/web/packages/VennDiagram/index.html">ViennDiagram</a> on CRAN</li>
+			<li><a href="https://cran.r-project.org/web/packages/gplots/index.html">gplots</a> on CRAN</li>
+		</ul>
+	</section>
+
+	<section id="venn-2-and-3-sets" class="slide twocol">
+		<h2>Number of sets = 2 or 3</h2>
+		<div class="left">
+			<img class="fill w" src="pics/set2.svg" alt="N = 2">
+		</div>
+		<div class="right">
+			<img class="fill w" src="pics/set3.svg" alt="N = 3">
+		</div>
+	</section>
+
+	<section id="venn-4-and-5-sets" class="slide twocol">
+		<h2>N = 4 or 5</h2>
+		<div class="left">
+			<img class="fill w" src="pics/set4.svg" alt="N = 4">
+		</div>
+		<div class="right">
+			<img class="fill w" src="pics/set5.svg" alt="N = 5">
+		</div>
+	</section>
+
+	<section id="venn-6-sets" class="slide tighter">
+		<div class="citation left">
+			<img src="pics/banana.png" alt="">
+			<p>Ref: D’Hont <i>et al.</i> (2012)
+				<a href="http://www.nature.com/nature/journal/v488/n7410/full/nature11241.html">
+					The banana (<i>Musa acuminata</i>) genome and the evolution of monocotyledonous plants.
+				</a> Nature <i>488</i>, 213–217
+			</p>
+		</div>
+		<style>
+			#venn-6-sets .citation > img {
+				width: 90%;
+				margin-top: -1em;
+			}
+		</style>
+	</section>
+
+	<section id="venn-not-practical" class="slide">
+		<h2>Venn diagram not practical for N ≥ 6</h2>
+		<ul>
+			<li>The shape is too complicated to comprehend</li>
+			<li>Shapes are fixed and cannot be proportional to the set size</li>
+			<li>Hard to tell which interaction is important</li>
+			<li>Most packages don't support beyond 6 sets</li>
+		</ul>
+	</section>
+
+	<section id="upset" class="slide tighter">
+		<h2><a href="http://www.caleydo.org/tools/upset/">UpSet</a>: a novel vis for set interaction</h2>
+		<img src="pics/upsetr.png" alt="">
+
+		<style>
+			#upset > img {
+				width: 85%;
+			}
+		</style>
+	</section>
+
+	<section id="how-to-read-upset" class="slide twocol l75">
+		<h2>How to read UpSet plot</h2>
+		<div class="left">
+			<ul>
+				<li>Connections of dots represent different set intersection</li>
+				<li>Each bar map to each intersection</li>
+				<li>Order intersections by their size</li>
+				<li>Intersections can be clipped to reduce complexity</li>
+			</ul>
+		</div>
+		<div class="right">
+			<div class="citation">
+				<img src="pics/upset_matrix.png" alt="">
+				<p>Ref: <a href="http://www.caleydo.org/tools/upset/">UpSet</a> official website</p>
+			</div>
+		</div>
+	</section>
+
+	<section id="banana-upsetr-redraw" class="slide tighter">
+		<img class="fill w" src="pics/upsetr-banana_clipped.png" alt="">
+		<h2>The banana plot redrawn</h2>
+		<style>
+			#banana-upsetr-redraw h2 {
+				position: absolute;
+				top: 10%;
+				right: 10%;
+			}
+		</style>
+	</section>
+
+	<section id="upset-tools" class="slide twocol">
+		<h2>UpSet tools</h2>
+		<div class="left">
+			<ul>
+				<li><a href="http://vcg.github.io/upset/">UpSet</a>: Web online version</li>
+				<li><a href="https://github.com/hms-dbmi/UpSetR">UpSetR</a>: R package</li>
+				<li><a href="https://gehlenborglab.shinyapps.io/upsetr/">UpSetR Shiny version</a></li>
+				<li><a href="https://github.com/ImSoErgodic/py-upset">pyUpSet</a>: Python package</li>
+			</ul>
+		</div>
+		<div class="right">
+			<div class="citation">
+				<img class="fill w" src="pics/upset_web.png" alt="">
+				<p>Ref: Web version of UpSet using example Fruit dataset.</p>
+			</div>
+		</div>
+	</section>
+
 	<!-- Section: Snakemake -->
 	<section class="slide">
 		<h2 class="shout">Snakemake</h2>
-	</section>
-
-	<!-- End Slide -->
-	<section id='end' class='slide no-number'>
-		<h2>Q&A</h2>
-		<img src="pics/end.jpg" class="cover w" alt="">
-		<style>
-			#end h2 {
-				position: absolute;
-				left: 10%;
-				top: 18%;
-				color: rgb(104, 135, 52);
-				text-align: right;
-				text-shadow: none;
-				font-size: 150px;
-			}
-		</style>
 	</section>
 
 	<!-- Section: About me -->
@@ -376,6 +487,23 @@ conda install bioconductor-rsamtools  # r pkg on bioconductor</code>
 		<div class="right">
 			<img class="fill w" src="pics/me.jpg" alt="">
 		</div>
+	</section>
+
+	<!-- End Slide -->
+	<section id='end' class='slide no-number'>
+		<h2>Q&A</h2>
+		<img src="pics/end.jpg" class="cover w" alt="">
+		<style>
+			#end h2 {
+				position: absolute;
+				left: 10%;
+				top: 18%;
+				color: rgb(104, 135, 52);
+				text-align: right;
+				text-shadow: none;
+				font-size: 150px;
+			}
+		</style>
 	</section>
 
 	<!-- END OF SLIDE CONTENT -->
