@@ -77,7 +77,7 @@
 			By <a href="http://liang2.tw" target="_blank">Liang<sup>2</sup></a> under CC 4.0 BY license
 		</p>
 		<p id="usage-instr">
-			<kbd>Esc</kbd> to overview <br />
+			<kbd>Esc</kbd> to overview <br>
 			<kbd>←</kbd> <kbd>→</kbd> to navigate
 		</p>
 		<img src="pics/cover.jpg" class="cover w" alt="">
@@ -159,7 +159,7 @@
 
 	<section id="bioinfo-use-r-and-py" class="slide">
 		<h2>R & Python are used together in bioinfo</h2>
-		<p>An analysis pipeline usually involves coding in R and Python. My personal preference:</p>
+		<p>My personal preference for an analysis pipeline:</p>
 		<ul>
 			<li>In Python,</li>
 				<ul>
@@ -171,6 +171,94 @@
 					<li>Statistical inference and modeling</li>
 					<li>Genomic annotation lookup</li>
 				</ul>
+		</ul>
+	</section>
+
+	<section id="reproducibility" class="slide">
+		<h2>Project-wise environment isolation</h2>
+		<ul>
+			<li>How to maintain a local instead of system-wide installation?</li>
+				<ul>
+					<li>Large cluster without root permission</li>
+					<li>To try / develop / debug a specific tool</li>
+				</ul>
+			<li>How to fix R version for different projects?</li>
+			<li>How to isolate different package dependencies?</li>
+				<ul>
+					<li>Actually, changing <a href="blog.revolutionanalytics.com/2015/11/r-projects.html"><code>.libPaths()</code></a> will do</li>
+				</ul>
+			<li>Those issues apply to Python too</li>
+		</ul>
+		<p class="next">
+			More importantly, how to create <strong>isolation for both Python and R</strong>?
+		</p>
+	</section>
+
+	<section id="conda" class="slide">
+		<h2><img src="pics/conda_logo.svg" alt="conda"> manages everything</h2>
+		<ul>
+			<li>Originally developed as an extended Python package manager</li>
+			<li>Developed by Continuum Analytics as an open source project</li>
+			<li>Conda manages not only python packages, but also their dependent libraries (e.g., libxml, mkl, and jdk)</li>
+			<li>Packages are shipped in compiled binaries, saving deployment time</li>
+			<li>An extended "virtual environment"</li>
+		</ul>
+		<style>
+			#conda h2 > img {
+				height: 1em;
+			}
+		</style>
+	</section>
+
+	<section id="install-conda" class="slide">
+		<h2>Install conda itself</h2>
+		<p>(Well, it is pretty much a "Python" thing...)</p>
+		<ul>
+			<li>With/Without packages pre-shipped: <a href="https://www.continuum.io/downloads">Anaconda</a> and <a href="http://conda.pydata.org/miniconda.html">Miniconda</a></li>
+			<li>Different default Python version: 2.7 and 3.5+</li>
+		</ul>
+		<p>No matter what version one installed, all can create identical environments</p>
+		<p class="note">Conda be installed by <a href="https://github.com/yyuu/pyenv">pyenv</a>.</p>
+	</section>
+
+	<section id="conda-usage" class="slide">
+		<h2>Conda usage</h2>
+		<pre class="language-bash">
+<code>conda install numpy matplotlib  # install new packages
+conda list                # list installed packages
+conda update              # check if newer version exists
+conda remove numpy scipy  # remove packages
+conda clean --all         # clean caches and unused packages</code>
+		</pre>
+	</section>
+
+	<section id="conda-env" class="slide">
+		<h2>Conda environment</h2>
+		<p>Create isolated environments using different python version and installed packages, managed via <code>conda env ...</code></p>
+		<pre class="language-bash">
+<code>$ conda create -n VENV_NAME python=3.5  # create a new env
+$ source activate VENV_NAME  # activate env
+(VENV_NAME) $                # inside the isolated env
+(VENV_NAME) $ conda install ...
+(VENV_NAME) $ deactivate
+$ </code>
+		</pre>
+	</section>
+
+	<section id="conda-channels" class="slide">
+		<h2>Conda channels</h2>
+		<ul>
+			<li>Channel contains a set of packages that are not shipped by default</li>
+				<ul>
+					<li>Only some popular packages are officially maintained</li>
+					<li>R settings should not mess with the default Python channel</li>
+				</ul>
+			<li>Popular channels:</li>
+			<ul>
+				<li><a href="https://conda-forge.github.io/">conda-forge</a>: community driven channels</li>
+				<li><a href="https://anaconda.org/r/">r</a>: for R</li>
+				<li><a href="https://anaconda.org/bioconda/">bioconda</a>: for biology-related tools</li>
+			</ul>
 		</ul>
 	</section>
 
@@ -189,12 +277,60 @@ conda install --channel r <mark>r-ggplot2</mark></code>
 		<p>Multiple R versions or settings can exist in separate conda environments.</p>
 	</section>
 
+	<section id="bioconda" class="slide">
+		<h2><img src="pics/bioconda.png" alt="bioconda"></h2>
+		<ul>
+			<li>In Bioinformatics both R and Python are heavily used, including several C/C++ based libraries</li>
+			<li>Manually managing the dependencies for R/Py/external packages is hard</li>
+			<li>By using conda, all of them can be version controlled together</li>
+			<li>Currently &gt;1,500 packages are ready to use</li>
+		</ul>
+		<style>
+			#bioconda h2 > img {
+				height: 1.5em;
+			}
+		</style>
+	</section>
+
 	<section id="bioconda-setup" class="slide">
 		<h2>Bioconda setup</h2>
-		<pre class="language-text"><code>conda config --add channels conda-forge
+		<pre class="language-text">
+<code>conda config --add channels conda-forge
 conda config --add channels defaults
 conda config --add channels r
-conda config --add channels bioconda</code></pre>
+conda config --add channels bioconda</code>
+		</pre>
+		<p>Note that the order of the channels the order of package discovery.</p>
+	</section>
+
+	<section id="bioconda-usage" class="slide">
+		<h2>Bioconda usage</h2>
+		<pre class="language-bash">
+<code>conda install bwa bowtie       # install non-py/r tools
+conda install samtools=0.1.19  # specify tool version
+conda install r-pheatmap       # install r pkg
+conda install bioconductor-rsamtools  # r pkg on bioconductor</code>
+		</pre>
+		<ul>
+			<li><a href="https://bioconda.github.io/recipes.html">Here</a> lists all bioconda receipts(packages)</li>
+		</ul>
+	</section>
+
+	<section id="bioconda-receipt-example" class="slide tighter">
+		<div class="citation">
+			<img class="fill w" src="pics/bioconda_receipt_example.png" alt="">
+			<p>Ref: <a href="https://bioconda.github.io/recipes/bioconductor-rsamtools/README.html">Receipt information page for r package rsamtools on Bioconductor</a></p>
+		</div>
+	</section>
+
+	<section id="bioconda-new-package" class="slide">
+		<h2>What if my packages are not supported?</h2>
+		<ul>
+			<li>Bioconda has an detailed <a href="https://bioconda.github.io/contributing.html">guide</a> for creating a new receipt for your package.</li>
+			<li>Skeletons for Python/CRAN/Bioconductor/Java/Perl/... tool</li>
+			<li>Travis CI / Docker to test the building</li>
+			<li>More info on <a href="https://bioconda.github.io/contributing.html">its documentation</a></li>
+		</ul>
 	</section>
 
 	<!-- Section: UpSetR -->
