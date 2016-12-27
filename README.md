@@ -1,5 +1,5 @@
 # Introduction to Bioconda, UpSetR, and Snakemake
-2017-12-27 at MLDM Monday / Taiwan R User Group
+2016-12-27 at MLDM Monday / Taiwan R User Group
 
 - [Meetup event link](http://www.meetup.com/Taiwan-R/events/236327688)
 - Screencast on Youtube
