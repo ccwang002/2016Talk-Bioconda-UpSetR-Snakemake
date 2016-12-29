@@ -471,6 +471,87 @@ conda install bioconductor-rsamtools  # r pkg on bioconductor</code>
 		<h2 class="shout">Snakemake</h2>
 	</section>
 
+	<section id="pipeline-example" class="slide tighter">
+		<h2>An analysis pipeline</h2>
+		<pre class="language-bash">
+<code>bwa mem <mark>genome.fa</mark> <mark>A.fastq</mark> | \
+    samtools view -Sb - > mapped_reads/A.bam
+samtools sort -T sorted_reads/A \
+    -O bam mapped_reads/A.bam > sorted_reads/A.bam
+samtools index sorted_reads/A.bam  # generate A.bam.bai
+
+# repeat for A, B, C fastq
+samtools mpileup -g -f genome.fa {A,B,C}.bam | \
+    bcftools call -mv - > calls/all.vcf</code>
+		</pre>
+	</section>
+
+	<section id="pipeline-example-cont" class="slide tighter">
+		<h2>Pipeline by a bash script</h2>
+		<pre class="language-bash">
+<code>fastq=( "A.fastq" "B.fastq" "C.fastq" )
+for i in "${fastq[@]}"; do
+    # generate mapped.bam
+    # generate sorted.bam
+    # generate sorted.bam.index
+done
+
+samtools mpileup -g -f genome.fa sorted_reads/{A,B,C}.bam | \
+    bcftools call -mv - > calls/all.vcf</code>
+		</pre>
+	</section>
+
+	<section id="pipeline-problem" class="slide">
+		<h2>Problem for bash script</h2>
+		<ul>
+			<li>Always rerun from the beginning even when only a few of the inputs or intermediate files are altered</li>
+			<li>Manual parallelization</li>
+			<li>Scripts are hard to reuse</li>
+		</ul>
+	</section>
+
+	<section class="slide twocol l80" >
+		<div class="left">
+		<h2>Snakemake</h2>
+<pre class="language-snakemake"><code>rule bwa_map:
+    input:
+        "data/genome.fa",
+        "data/samples/{sample}.fastq"
+    output:
+        "mapped_reads/{sample}.bam"
+    shell:
+        "bwa mem {input} | samtools view -Sb - > {output}"</code></pre>
+		</div>
+		<div class="right">
+			<img src="pics/dag_rule.svg" alt="">
+		</div>
+	</section>
+
+	<section class="slide twocol l75">
+		<h2>Job dependency DAG graph</h2>
+		<div class="left">
+		<img src="pics/dag.svg" alt="">
+		</div>
+		<div class="right">
+			<ul>
+				<li>Independent jobs can be parallelized</li>
+				<br>
+				<li>Dotted jobs are complete; wont rerun</li>
+			</ul>
+		</div>
+	</section>
+
+	<section class="slide">
+		<h2>Extra goodies</h2>
+		<ul>
+			<li>Submit jobs as cluster jobs (bsub, qsub, LSF, SLURM and etc)</li>
+			<li>Logging</li>
+			<li>Remote (S3, Dropbox and etc), temporary files</li>
+			<li>Reusable rules</li>
+			<li>Automatically build necessary conda env (3.9+)</li>
+		</ul>
+	</section>
+
 	<!-- Section: About me -->
 	<section id="about-me" class="slide no-number twocol l60">
 		<div class="left">

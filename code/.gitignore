@@ -4,3 +4,4 @@ sorted_reads/
 calls/
 *.sqlite
 *.sqlite3
+.snakemake/
